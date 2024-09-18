@@ -1,17 +1,43 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BlogPost from '../../layouts/BlogPost.astro';
-
+import qs from 'qs'
+ const { post } = Astro.props; 
+ const { slug, featuredImage, title, excerpt, author } = post.attributes;
+ console.log(post)
 export async function getStaticPaths() {
-	const posts = await getCollection('blog');
-	return posts.map((post) => ({
-		params: { slug: post.slug },
-		props: post,
+  let url = import.meta.env.STRAPI_URL + "/api/posts";
+
+  const query = qs.stringify({
+  populate: {
+    featuredImage: {
+      fields: ["name", "width", "height", "url"],
+    },
+    author: {
+      populate: {
+        bioImage: {
+          fields: ["name", "width", "height", "url"],
+        },
+      },
+    },
+    category: {
+      populate: true,
+    },
+  },
+});
+	const posts = await fetch(url + "?" + query).then((response) =>
+  		response.json()
+	);
+  const {data}= posts
+	return data.map((post) => ({
+		  params: { slug: post.slug },
+		  props: post,
 	}));
+
+	
 }
 type Props = CollectionEntry<'blog'>;
 
-const post = Astro.props;
 const { Content } = await post.render();
 ---
 

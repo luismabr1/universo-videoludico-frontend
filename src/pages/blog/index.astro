@@ -2,13 +2,37 @@
 import BaseHead from '../../components/BaseHead.astro';
 import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
+import qs from 'qs'
 import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
-import { getCollection } from 'astro:content';
 import FormattedDate from '../../components/FormattedDate.astro';
+let url = import.meta.env.STRAPI_URL + "/api/posts";
+let root_url = import.meta.env.STRAPI_URL ;
 
-const posts = (await getCollection('blog')).sort(
-	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+const query = qs.stringify({
+  populate: {
+    featuredImage: {
+      fields: ["name", "width", "height", "url"],
+    },
+    author: {
+      populate: {
+        bioImage: {
+          fields: ["name", "width", "height", "url"],
+        },
+      },
+    },
+    category: {
+      populate: true,
+    },
+  },
+});
+
+const posts = await fetch(url + "?" + query).then((response) =>
+  response.json()
 );
+const {data}=posts
+const image_url=JSON.stringify(data[0].attributes.featuredImage.data[0].attributes.url)
+console.log(image_url, 'saldo')
+
 ---
 
 <!doctype html>
@@ -91,18 +115,33 @@ const posts = (await getCollection('blog')).sort(
 			<section>
 				<ul>
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.slug}/`}>
-									<img width={720} height={360} src={post.data.heroImage} alt="" />
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
+						data.map((post) => {
+						  // Handle potential missing featuredImage
+						  const featuredImage = post.attributes.featuredImage?.data?.[0];
+						  console.log(root_url + featuredImage.attributes.url)
+					  
+						  return (
+							<li key={post.id}> {/* Add a unique key for each list item */}
+							  <a href={`/blog/${post.attributes.slug}/`}>
+								{featuredImage && (
+								  <img
+									width={720}
+									height={360}
+									src={featuredImage.attributes.url
+										? root_url + featuredImage.attributes.url
+										: "https://via.placeholder.com/1080"}
+									alt={featuredImage.attributes.name}
+								  />
+								)}
+								<h4 class="title">{post.attributes.title}</h4>
+								<p class="date">
+								  <FormattedDate date={post.attributes.publishedAt} />
+								</p>
+							  </a>
 							</li>
-						))
-					}
+						  );
+						})
+					  }
 				</ul>
 			</section>
 		</main>
