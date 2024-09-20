@@ -4,8 +4,8 @@ const  {post}  =Astro.props
 console.log(post, 'AUTHOR')
 const {featuredImage, title, content, author, readingTime, publishedAt } = post?.attributes || {};
 const link = import.meta.env.STRAPI_URL;
-const bio = author.data.attributes.bioImage
-const bioImage = bio.data.attributes.url
+const bio = author?.data?.attributes?.bioImage || {};
+const bioImage = bio?.data?.attributes?.url || "https://via.placeholder.com/1080"
 /* const BioImage = author.data.attributes.bioImage.data.attributes.url || null; */
 const postImage = featuredImage?.data || {};
 const ImagePost = postImage[0]?.attributes.url || "https://via.placeholder.com/1080"
