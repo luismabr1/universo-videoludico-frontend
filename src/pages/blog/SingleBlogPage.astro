@@ -1,9 +1,12 @@
 ---
 import FormattedDate from '../../components/FormattedDate.astro';
 const  {post}  =Astro.props
-
+console.log(post, 'AUTHOR')
 const {featuredImage, title, content, author, readingTime, publishedAt } = post?.attributes || {};
 const link = import.meta.env.STRAPI_URL;
+const bio = author.data.attributes.bioImage
+const bioImage = bio.data.attributes.url
+/* const BioImage = author.data.attributes.bioImage.data.attributes.url || null; */
 const postImage = featuredImage?.data || {};
 const ImagePost = postImage[0]?.attributes.url || "https://via.placeholder.com/1080"
 ---
@@ -23,13 +26,13 @@ const ImagePost = postImage[0]?.attributes.url || "https://via.placeholder.com/1
     </h1>
     <div class="text-gray-500 flex justify-center items-center space-x-2">
       <span class="flex space-x-2 items-center overflow-hidden">
-<!--          <img
+          <img
           class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-          src={authorImage
-            ? url + authorImage
+          src={bioImage
+            ? link + bioImage
             : "https://via.placeholder.com/1080"}
           alt="author picture"
-        />  -->
+        />   
         <p class="font-medium text-xs text-gray-600 cursor-pointer">
           {author?.name}
         </p>
