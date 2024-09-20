@@ -1,10 +1,9 @@
 ---
-import { type CollectionEntry, getCollection } from 'astro:content';
-import BlogPost from '../../layouts/BlogPost.astro';
+import type { GetStaticPaths } from 'astro';
+import BlogPostSingle from '../../layouts/BlogPostSingle.astro';
+import SingleBlogPage from './SingleBlogPage.astro';
 import qs from 'qs'
- const { post } = Astro.props; 
- const { slug, featuredImage, title, excerpt, author } = post.attributes;
- console.log(post)
+
 export async function getStaticPaths() {
   let url = import.meta.env.STRAPI_URL + "/api/posts";
 
@@ -25,22 +24,19 @@ export async function getStaticPaths() {
     },
   },
 });
-	const posts = await fetch(url + "?" + query).then((response) =>
-  		response.json()
-	);
-  const {data}= posts
-	return data.map((post) => ({
-		  params: { slug: post.slug },
-		  props: post,
-	}));
 
-	
+  const data = await fetch(url + "?" + query).then(response => response.json());
+  return data.data.map((post) => {
+    return {
+      params: { slug: post.attributes.slug },
+      props: { post },
+    };
+  }) satisfies GetStaticPaths
 }
-type Props = CollectionEntry<'blog'>;
-
-const { Content } = await post.render();
+const { slug } = Astro.params
+const {post} =Astro.props
 ---
 
-<BlogPost {...post.data}>
-	<Content />
-</BlogPost>
+<BlogPostSingle props>
+  <SingleBlogPage props={post}/>
+</BlogPostSingle> 

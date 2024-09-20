@@ -8,6 +8,7 @@ import FormattedDate from '../../components/FormattedDate.astro';
 let url = import.meta.env.STRAPI_URL + "/api/posts";
 let root_url = import.meta.env.STRAPI_URL ;
 
+
 const query = qs.stringify({
   populate: {
     featuredImage: {
@@ -30,8 +31,6 @@ const posts = await fetch(url + "?" + query).then((response) =>
   response.json()
 );
 const {data}=posts
-const image_url=JSON.stringify(data[0].attributes.featuredImage.data[0].attributes.url)
-console.log(image_url, 'saldo')
 
 ---
 
@@ -118,8 +117,6 @@ console.log(image_url, 'saldo')
 						data.map((post) => {
 						  // Handle potential missing featuredImage
 						  const featuredImage = post.attributes.featuredImage?.data?.[0];
-						  console.log(root_url + featuredImage.attributes.url)
-					  
 						  return (
 							<li key={post.id}> {/* Add a unique key for each list item */}
 							  <a href={`/blog/${post.attributes.slug}/`}>
