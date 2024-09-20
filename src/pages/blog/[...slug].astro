@@ -37,6 +37,6 @@ const { slug } = Astro.params
 const {post} =Astro.props
 ---
 
-<BlogPostSingle props>
-  <SingleBlogPage props={post}/>
+<BlogPostSingle layout={post}>
+  <SingleBlogPage post={post}/>
 </BlogPostSingle> 

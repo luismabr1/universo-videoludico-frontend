@@ -1,18 +1,18 @@
 ---
 import { marked } from "marked";
-import { formatDistance, format } from 'date-fns';
 import FormattedDate from '../../components/FormattedDate.astro';
-const { props } = Astro.props;
-const { featuredImage, title, content, author, readingTime, publishedAt } = props.attributes;
-const url = import.meta.env.STRAPI_URL;
-const postImage = featuredImage.data || null;
-const ImagePost = postImage[0].attributes.url
+const  {post}  =Astro.props
+
+const {featuredImage, title, content, author, readingTime, publishedAt } = post?.attributes || {};
+const link = import.meta.env.STRAPI_URL;
+const postImage = featuredImage?.data || {};
+const ImagePost = postImage[0]?.attributes.url || "https://via.placeholder.com/1080"
 ---
 
 <div class="container mx-auto">
   <div class="w-full flex justify-end rounded-md">
     <a
-      href={`/`}
+      href={`/blog`}
       class="inline-flex items-center justify-center px-5 py-2 border border-transparent text-base font-medium rounded-md text-white bg-yellow-500 hover:bg-yellow-400"
     >
       Back
@@ -24,13 +24,13 @@ const ImagePost = postImage[0].attributes.url
     </h1>
     <div class="text-gray-500 flex justify-center items-center space-x-2">
       <span class="flex space-x-2 items-center overflow-hidden">
-<!--         <img
+<!--          <img
           class="inline-block h-8 w-8 rounded-full ring-2 ring-white"
           src={authorImage
             ? url + authorImage
             : "https://via.placeholder.com/1080"}
           alt="author picture"
-        /> -->
+        />  -->
         <p class="font-medium text-xs text-gray-600 cursor-pointer">
           {author?.name}
         </p>
@@ -45,12 +45,13 @@ const ImagePost = postImage[0].attributes.url
     <img
       class="object-cover w-full h-full"
       src={postImage
-        ? url + ImagePost
+        ? link + ImagePost
         : "https://via.placeholder.com/1080"}
     />
   </div>
   <article class=" prose max-w-full w-full my-4">
-    <div class="rich-text" set:html={marked.parse(content)}  />
+    <!-- <div class="rich-text" set:html={marked.parse(content)}  /> -->
+    {content}
   </article>
 </div>
 
