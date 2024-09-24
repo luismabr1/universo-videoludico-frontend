@@ -6,7 +6,7 @@ const {featuredImage, title, content, author, readingTime, publishedAt } = post?
 const link = import.meta.env.STRAPI_URL;
 const bio = author?.data?.attributes?.bioImage || {};
 const bioImage = bio?.data?.attributes?.url || "https://via.placeholder.com/1080"
-console.log(link+bioImage, 'BIOIMAGE')
+const authorName=author?.data?.attributes.name
 const postImage = featuredImage?.data || {};
 const ImagePost = postImage[0]?.attributes.url || "https://via.placeholder.com/1080"
 ---
@@ -34,7 +34,7 @@ const ImagePost = postImage[0]?.attributes.url || "https://via.placeholder.com/1
           alt="author picture"
         />   
         <p class="font-medium text-xs text-gray-600 cursor-pointer">
-          {author?.name}
+          {authorName}
         </p>
       </span>
       <span>&middot;</span>
